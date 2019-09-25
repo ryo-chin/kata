@@ -86,6 +86,18 @@ public class DiscountServiceTest {
     }
 
     @Test
+    public void test平日朝夕割引_朝夕以外の時間で利用していた場合は割引されないこと() {
+        HighwayDrive drive = new HighwayDrive();
+        drive.setEnteredAt(LocalDateTime.of(2016, 3, 31, 23, 0));
+        drive.setExitedAt(LocalDateTime.of(2016, 4, 1, 5, 30));
+        drive.setDriver(driver(10));
+        drive.setVehicleFamily(STANDARD);
+        drive.setRouteType(URBAN);
+
+        assertThat(discountService.calc(drive)).isEqualTo(0);
+    }
+
+    @Test
     public void test休日朝夕は休日割が適用される() {
         HighwayDrive drive = new HighwayDrive();
         drive.setEnteredAt(LocalDateTime.of(2016, 4, 1, 23, 0));
