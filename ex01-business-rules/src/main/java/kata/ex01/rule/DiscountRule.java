@@ -1,4 +1,4 @@
-package kata.ex01.model.rule;
+package kata.ex01.rule;
 
 import kata.ex01.model.HighwayDrive;
 

@@ -1,4 +1,4 @@
-package kata.ex01.model.rule;
+package kata.ex01.rule;
 
 import kata.ex01.model.HighwayDrive;
 import kata.ex01.model.RouteType;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author hakiba
  */
-public class HoliDaysDiscountRule implements DiscountRule {
+public class HolidaysDiscountRule implements DiscountRule {
     @Override
     public boolean isApplicable(HighwayDrive drive) {
         boolean isHoliday = HolidayUtils.isHoliday(drive.getEnteredAt().toLocalDate()) || HolidayUtils.isHoliday(drive.getExitedAt().toLocalDate());

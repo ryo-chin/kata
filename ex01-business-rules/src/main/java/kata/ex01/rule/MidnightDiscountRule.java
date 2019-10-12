@@ -1,20 +1,17 @@
-package kata.ex01.model.rule;
+package kata.ex01.rule;
 
 import kata.ex01.model.DiscountPeriod;
 import kata.ex01.model.HighwayDrive;
-
-import java.time.LocalTime;
 
 /**
  * @author hakiba
  */
 public class MidnightDiscountRule implements DiscountRule {
+    private DiscountPeriod period = new DiscountPeriod(0, 4);
 
     @Override
     public boolean isApplicable(HighwayDrive drive) {
-        return new DiscountPeriod(LocalTime.of(0, 0), LocalTime.of(4, 0))
-                .calcApplyPeriod(drive)
-                .isPresent();
+        return period.isIn(drive);
     }
 
     @Override
