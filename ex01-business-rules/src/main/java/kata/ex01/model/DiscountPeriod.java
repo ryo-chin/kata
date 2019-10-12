@@ -49,6 +49,7 @@ public class DiscountPeriod {
         LocalDate discountDate = isNextDay(drive) ? LocalDate.from(drive.getEnteredAt().plusDays(1)) : LocalDate.from(drive.getEnteredAt());
         LocalDateTime startAt = LocalDateTime.of(discountDate, startTime);
         LocalDateTime endAt = LocalDateTime.of(discountDate, endTime);
+        // このロジックで実装 : https://qiita.com/kawasima/items/9e23544c95385658292a#2-割引期間に利用期間が少しでも入っていればよいケース
         return drive.getEnteredAt().isBefore(endAt) && drive.getExitedAt().isAfter(startAt)
                 ? Optional.of(new AppliedPeriod(startAt, endAt))
                 : Optional.empty();

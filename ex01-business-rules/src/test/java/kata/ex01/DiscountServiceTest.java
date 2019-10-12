@@ -64,8 +64,8 @@ public class DiscountServiceTest {
     @Test
     public void test平日朝夕割引_利用回数が5回未満の場合割引されないこと() {
         HighwayDrive drive = new HighwayDrive();
-        drive.setEnteredAt(LocalDateTime.of(2016, 3, 31, 23, 0));
-        drive.setExitedAt(LocalDateTime.of(2016, 4, 1, 6, 30));
+        drive.setEnteredAt(LocalDateTime.of(2019, 10, 10, 5, 0));
+        drive.setExitedAt(LocalDateTime.of(2019, 10, 10, 9, 30));
         drive.setDriver(driver(4));
         drive.setVehicleFamily(STANDARD);
         drive.setRouteType(RURAL);
@@ -76,8 +76,8 @@ public class DiscountServiceTest {
     @Test
     public void test平日朝夕割引_ルートが都市部の場合割引されないこと() {
         HighwayDrive drive = new HighwayDrive();
-        drive.setEnteredAt(LocalDateTime.of(2016, 3, 31, 23, 0));
-        drive.setExitedAt(LocalDateTime.of(2016, 4, 1, 6, 30));
+        drive.setEnteredAt(LocalDateTime.of(2019, 10, 10, 5, 0));
+        drive.setExitedAt(LocalDateTime.of(2019, 10, 10, 9, 30));
         drive.setDriver(driver(10));
         drive.setVehicleFamily(STANDARD);
         drive.setRouteType(URBAN);
@@ -88,8 +88,8 @@ public class DiscountServiceTest {
     @Test
     public void test平日朝夕割引_朝夕以外の時間で利用していた場合は割引されないこと() {
         HighwayDrive drive = new HighwayDrive();
-        drive.setEnteredAt(LocalDateTime.of(2016, 3, 31, 23, 0));
-        drive.setExitedAt(LocalDateTime.of(2016, 4, 1, 5, 30));
+        drive.setEnteredAt(LocalDateTime.of(2019, 10, 10, 10, 0));
+        drive.setExitedAt(LocalDateTime.of(2019, 10, 10, 14, 0));
         drive.setDriver(driver(10));
         drive.setVehicleFamily(STANDARD);
         drive.setRouteType(URBAN);
@@ -105,6 +105,18 @@ public class DiscountServiceTest {
         drive.setDriver(driver(10));
         drive.setVehicleFamily(STANDARD);
         drive.setRouteType(RURAL);
+
+        assertThat(discountService.calc(drive)).isEqualTo(30);
+    }
+
+    @Test
+    public void test深夜割引が適用される() {
+        HighwayDrive drive = new HighwayDrive();
+        drive.setEnteredAt(LocalDateTime.of(2016, 4, 1, 23, 0));
+        drive.setExitedAt(LocalDateTime.of(2016, 4, 2, 6, 30));
+        drive.setDriver(driver(10));
+        drive.setVehicleFamily(STANDARD);
+        drive.setRouteType(URBAN);
 
         assertThat(discountService.calc(drive)).isEqualTo(30);
     }
