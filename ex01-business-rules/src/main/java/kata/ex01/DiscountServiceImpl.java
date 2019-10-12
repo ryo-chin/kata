@@ -1,20 +1,23 @@
 package kata.ex01;
 
+import kata.ex01.model.DiscountPeriod;
+import kata.ex01.model.DiscountPeriod.AppliedPeriod;
 import kata.ex01.model.HighwayDrive;
 import kata.ex01.model.RouteType;
 import kata.ex01.model.VehicleFamily;
 import kata.ex01.util.HolidayUtils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.function.Predicate.not;
+
 /**
- * @author kawasima
+ * @author hakiba
  */
 public class DiscountServiceImpl implements DiscountService {
     @Override
@@ -25,43 +28,19 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     private long discountByWeekDaysRule(HighwayDrive drive) {
-        LocalDateTime morningEnd, morningStart;
-        if (drive.getEnteredAt().getHour() >= 9) {
-            morningStart = LocalDateTime.of(
-                    LocalDate.from(drive.getEnteredAt().plusDays(1)),
-                    LocalTime.of(6, 0));
-            morningEnd = LocalDateTime.of(
-                    LocalDate.from(drive.getExitedAt().plusDays(1)),
-                    LocalTime.of(9, 0));
-        } else {
-            morningStart = LocalDateTime.of(
-                    LocalDate.from(drive.getEnteredAt()),
-                    LocalTime.of(6, 0));
-            morningEnd = LocalDateTime.of(
-                    LocalDate.from(drive.getExitedAt()),
-                    LocalTime.of(9, 0));
+        if (RouteType.RURAL != drive.getRouteType()) {
+            return 0;
         }
-        LocalDateTime eveningEnd, eveningStart;
-        if (drive.getEnteredAt().getHour() >= 9) {
-            eveningStart = LocalDateTime.of(
-                    LocalDate.from(drive.getEnteredAt().plusDays(1)),
-                    LocalTime.of(17, 0));
-            eveningEnd = LocalDateTime.of(
-                    LocalDate.from(drive.getExitedAt().plusDays(1)),
-                    LocalTime.of(20, 0));
-        } else {
-            eveningStart = LocalDateTime.of(
-                    LocalDate.from(drive.getEnteredAt()),
-                    LocalTime.of(17, 0));
-            eveningEnd = LocalDateTime.of(
-                    LocalDate.from(drive.getExitedAt()),
-                    LocalTime.of(20, 0));
-        }
-        boolean isNotHoliday = !HolidayUtils.isHoliday(morningStart.toLocalDate()) && !HolidayUtils.isHoliday(eveningStart.toLocalDate());
-        boolean isMorning = drive.getEnteredAt().isAfter(morningEnd) && drive.getExitedAt().isBefore(morningStart);
-        boolean isEvening = drive.getEnteredAt().isAfter(eveningEnd) && drive.getExitedAt().isBefore(eveningStart);
-        boolean isRural = RouteType.RURAL == drive.getRouteType();
-        if (isNotHoliday && (isMorning || isEvening) && isRural) {
+        List<DiscountPeriod> discountPeriods = List.of(
+                new DiscountPeriod(LocalTime.of(6, 0), LocalTime.of(9, 0)),
+                new DiscountPeriod(LocalTime.of(17, 0), LocalTime.of(20, 0)));
+        Optional<AppliedPeriod> appliedPeriod = discountPeriods
+                .stream()
+                .map(p -> p.calcApplyPeriod(drive))
+                .flatMap(Optional::stream)
+                .filter(not(AppliedPeriod::isHoliDay))
+                .findFirst();
+        if (appliedPeriod.isPresent()) {
             int countPerMonth = drive.getDriver().getCountPerMonth();
             if (countPerMonth >= 10) {
                 return 50;
