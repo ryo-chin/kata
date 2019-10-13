@@ -1,36 +1,26 @@
 package kata.ex02;
 
 import com.google.inject.Inject;
+import kata.ex02.hook.SendApiHook;
+import kata.ex02.hook.SendEmailHook;
 import kata.ex02.model.Order;
-import kata.ex02.model.OrderDetail;
 import kata.ex02.repository.OrderRepository;
-import kata.ex02.util.ApiSender;
-import kata.ex02.util.MailSender;
 
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
-    private ApiSender apiSender;
-    private MailSender mailSender;
-    private Map<String, Consumer<OrderDetail>> notificationOrderMap;
+    private List<OrderHook> orderHooks;
 
     @Inject
-    public OrderServiceImpl(OrderRepository repository, ApiSender apiSender, MailSender mailSender) {
+    public OrderServiceImpl(OrderRepository repository, SendApiHook apiHook, SendEmailHook mailHook) {
         this.repository = repository;
-        this.apiSender = apiSender;
-        this.mailSender = mailSender;
-        this.notificationOrderMap = Map.of(
-                "A", apiSender::send,
-                "B", mailSender::send
-        );
+        this.orderHooks = List.of(apiHook, mailHook);
     }
 
     @Override
     public void order(Order order) {
         repository.save(order);
-        order.getOrderDetails()
-                .forEach(orderDetail -> notificationOrderMap.get(orderDetail.getProductProvider().getName()).accept(orderDetail));
+        orderHooks.forEach(orderHook -> orderHook.execute(order));
     }
 }
