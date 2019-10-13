@@ -1,26 +1,22 @@
 package kata.ex02;
 
 import com.google.inject.Inject;
-import kata.ex02.hook.SendApiHook;
-import kata.ex02.hook.SendEmailHook;
 import kata.ex02.model.Order;
 import kata.ex02.repository.OrderRepository;
 
-import java.util.List;
-
 public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
-    private List<OrderHook> orderHooks;
+    private HookRegistry hookRegistry;
 
     @Inject
-    public OrderServiceImpl(OrderRepository repository, SendApiHook apiHook, SendEmailHook mailHook) {
+    public OrderServiceImpl(OrderRepository repository, HookRegistry hookRegistry) {
         this.repository = repository;
-        this.orderHooks = List.of(apiHook, mailHook);
+        this.hookRegistry = hookRegistry;
     }
 
     @Override
     public void order(Order order) {
         repository.save(order);
-        orderHooks.forEach(orderHook -> orderHook.execute(order));
+        hookRegistry.run(order);
     }
 }
