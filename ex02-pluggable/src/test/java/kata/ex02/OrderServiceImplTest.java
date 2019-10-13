@@ -15,14 +15,17 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.times;
 
 
 class OrderServiceImplTest {
@@ -92,7 +95,7 @@ class OrderServiceImplTest {
                 sentCount++;
             }
         }
-        assertThat(sentCount).isEqualTo(2);
+        assertThat(sentCount).isEqualTo(4);
     }
 
 }

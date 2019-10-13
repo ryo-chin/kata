@@ -1,10 +1,8 @@
 package kata.ex02;
 
-import kata.ex02.model.Order;
-
 /**
  * @author hakiba
  */
-public interface OrderHook {
-    void execute(Order order);
+public interface OrderHook<T> {
+    void execute(T v);
 }

@@ -1,6 +1,7 @@
 package kata.ex02;
 
 import com.google.inject.Inject;
+import kata.ex02.hook.OrderHookPoint;
 import kata.ex02.model.Order;
 import kata.ex02.repository.OrderRepository;
 
@@ -16,7 +17,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void order(Order order) {
+        hookRegistry.run(OrderHookPoint.BeforeOrder, order);
         repository.save(order);
-        hookRegistry.run(order);
+        hookRegistry.run(OrderHookPoint.AfterOrder, order);
     }
 }

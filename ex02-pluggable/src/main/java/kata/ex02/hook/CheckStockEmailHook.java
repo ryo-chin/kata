@@ -8,11 +8,11 @@ import kata.ex02.util.MailSender;
 /**
  * @author hakiba
  */
-public class SendEmailHook implements OrderHook<Order> {
+public class CheckStockEmailHook implements OrderHook<Order> {
     private MailSender mailSender;
 
     @Inject
-    public SendEmailHook(MailSender mailSender) {
+    public CheckStockEmailHook(MailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -20,6 +20,6 @@ public class SendEmailHook implements OrderHook<Order> {
     public void execute(Order order) {
         order.getOrderDetails().stream()
                 .filter(orderDetail -> "B".equals(orderDetail.getProductProvider().getName()))
-                .forEach(orderDetail -> mailSender.send(orderDetail));
+                .forEach(orderDetail -> mailSender.checkStock(orderDetail));
     }
 }

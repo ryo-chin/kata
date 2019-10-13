@@ -10,4 +10,8 @@ public class ApiSender {
     public void send(OrderDetail order) {
         LOG.info("Send via API: provider='{}'", order.getProductProvider().getName());
     }
+
+    public void checkStock(OrderDetail order) {
+        LOG.info("Check stock via API: provider='{}'", order.getProductProvider().getName());
+    }
 }

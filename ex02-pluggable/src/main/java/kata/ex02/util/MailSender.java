@@ -10,4 +10,8 @@ public class MailSender {
     public void send(OrderDetail order) {
         LOG.info("Send via Email: provider='{}'", order.getProductProvider().getName());
     }
+
+    public void checkStock(OrderDetail order) {
+        LOG.info("Check stock via Email: provider='{}'", order.getProductProvider().getName());
+    }
 }

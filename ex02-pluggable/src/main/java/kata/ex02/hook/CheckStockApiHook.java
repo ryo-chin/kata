@@ -8,18 +8,18 @@ import kata.ex02.util.ApiSender;
 /**
  * @author hakiba
  */
-public class SendApiHook implements OrderHook<Order> {
+public class CheckStockApiHook implements OrderHook<Order> {
     private ApiSender apiSender;
 
     @Inject
-    public SendApiHook(ApiSender apiSender) {
+    public CheckStockApiHook(ApiSender apiSender) {
         this.apiSender = apiSender;
     }
 
     @Override
     public void execute(Order order) {
         order.getOrderDetails().stream()
-                .filter(detail -> "A".equals(detail.getProductProvider().getName()))
-                .forEach(orderDetail -> apiSender.send(orderDetail));
+                .filter(orderDetail -> "A".equals(orderDetail.getProductProvider().getName()))
+                .forEach(orderDetail -> apiSender.checkStock(orderDetail));
     }
 }
